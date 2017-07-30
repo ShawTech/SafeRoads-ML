@@ -3,6 +3,18 @@ import tensorflow as tf
 
 mnist = input_data.read_data_sets("MNIST_data/", one_hot=True)
 
+# Can we use this?
+def read_from_csv(filename_queue):
+    reader = tf.TextLineReader(skip_header_lines=1)
+    _, csv_row = reader.read(filename_queue)
+    defaults = [[0], [0], [0], [0], [0], [0]]
+    col_lat, col_long, col_date, col_time, col_light_cond, col_speed_zone, col_label = tf.decode_csv(
+        csv_row, record_defaults=defaults
+    )
+    features = tf.pack([col_lat, col_long, col_date, col_time, col_light_cond, col_speed_zone])
+    label = tf.pack([col_label])
+    return features, label
+
 x = tf.placeholder(tf.float32, shape=[None, 784])
 y_ = tf.placeholder(tf.float32, shape=[None, 10])
 
